@@ -41,7 +41,8 @@ services:
       - 8080:8080
     devices:
     #Adresse de votre dongle usb ZigBee à changer par la votre (uniquement avant les ':')
-      - /dev/ttyUSB0:/dev/ttyUSB0
+      #- /dev/ttyUSB0:/dev/ttyUSB0
+      - /dev/serial/by-id/usb-ITead_Sonoff_Zigbee_3.0_USB_Dongle_Plus_5a1d8c8c5ffded118e4bfe64024206e6-if00-port0:/dev/ttyUSB0
     restart: unless-stopped
 
 volumes:

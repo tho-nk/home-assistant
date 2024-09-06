@@ -4,8 +4,9 @@ mqtt:
   base_topic: zigbee2mqtt
   server: mqtt://mosquitto
 serial:
+  adapter: ember
   port: /dev/ttyUSB0
-  baudrate: 115200
+  baudrate: 230400
 frontend:
   port: 8080
 
