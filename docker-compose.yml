@@ -3,52 +3,52 @@ services:
     container_name: homeassistant
     image: "ghcr.io/home-assistant/home-assistant:stable"
     volumes:
+      # Mount Home Assistant configuration
       - ./home-assistant/config:/config
+      # Synchronize time with host
       - /etc/localtime:/etc/localtime:ro
+      # Mount DBus socket for Home Assistant
       - /run/dbus:/run/dbus:ro
     restart: unless-stopped
     privileged: true
     network_mode: host
 
-
-  #Conteneur du broker MQTT Mosquitto
   mosquitto:
     image: eclipse-mosquitto
     container_name: mqtt
-    #Pas besoin d'exporter de port vers l'extérieur
     ports:
+      # Expose MQTT port
       - 1883:1883
     volumes:
-    #Bind mount pour la configuration
+      # Mount Mosquitto configuration
       - ./mosquitto/config:/mosquitto/config
-    #Volumes pour les logs et les données persistantes
-      - mosquitto_data:/mosquitto/data
+      # Mount Mosquitto data
+      - ./mosquitto/data:/mosquitto/data
+      # Use system log for Mosquitto logs
       - mosquitto_log:/mosquitto/log
 
-  #Conteneur ZigBee2MQTT
   zigbee2mqtt:
     image: koenkk/zigbee2mqtt
     container_name: zigbee2mqtt
     depends_on:
-    #Le conteneur mosquitto doit être démarré pour lancer le conteneur ZigBee2MQTT
+      # Ensure Mosquitto starts before Zigbee2MQTT
       - mosquitto
     volumes:
+      # Mount Zigbee2MQTT data
       - ./zigbee2mqtt:/app/data
+      # Mount udev for device access
       - /run/udev:/run/udev:ro
+      # Synchronize time with host
       - /etc/localtime:/etc/localtime:ro
     ports:
-    #Port Zigbee2MQTT
+      # Expose Zigbee2MQTT web frontend
       - 8080:8080
     devices:
-    #Adresse de votre dongle usb ZigBee à changer par la votre (uniquement avant les ':')
-      #- /dev/ttyUSB0:/dev/ttyUSB0
+      # Map Zigbee USB dongle to container
       - /dev/serial/by-id/usb-ITead_Sonoff_Zigbee_3.0_USB_Dongle_Plus_5a1d8c8c5ffded118e4bfe64024206e6-if00-port0:/dev/ttyUSB0
     restart: unless-stopped
 
 volumes:
-  mosquitto_config:
-  mosquitto_data:
+  # Persistent log storage for Mosquitto
   mosquitto_log:
-  zigbee_data:
-
 
