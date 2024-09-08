@@ -9,5 +9,10 @@ serial:
   baudrate: 230400
 frontend:
   port: 8080
-
-
+advanced:
+  log_level: info
+devices:
+  '0xa4c1381852800272':
+    friendly_name: first_motion_sensor
+  '0x0c4314fffe329859':
+    friendly_name: Ikea_Tradfri_LED_Driver_Kitchen
