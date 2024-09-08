@@ -14,7 +14,7 @@ Use the firmware builder tool available at [Silicon Labs Firmware Builder](https
 
 Check the device path on your system with the following command:
 ```
-root@tc-m720q:~# ls -l /dev/serial/by-id/
+ugitho@tc-m720q:~# ls -l /dev/serial/by-id/
 total 0
 lrwxrwxrwx 1 root root 13 Sep  8 00:08 usb-ITead_Sonoff_Zigbee_3.0_USB_Dongle_Plus_5a1d8c8c5ffded118e4bfe64024206e6-if00-port0 -> ../../ttyUSB0
 ```
@@ -23,7 +23,7 @@ lrwxrwxrwx 1 root root 13 Sep  8 00:08 usb-ITead_Sonoff_Zigbee_3.0_USB_Dongle_Pl
 
 ***Directory Structure:***
 ```
-root@tc-m720q:~/hass# tree -L 3
+ugitho@tc-m720q:~/hass# tree -L 3
 .
 ├── docker-compose.yml
 ├── home-assistant
@@ -126,7 +126,7 @@ advanced:
 You can now start the containers with the following command:
 
 ```
-docker compose up -d
+sudo docker compose up -d --remove-orphans
 ```
 If everything is set up correctly, there should be no errors, and you can access the web interfaces:
 
@@ -135,4 +135,19 @@ If everything is set up correctly, there should be no errors, and you can access
 - Zigbee2MQTT: http://<your-ip-address>:8080
 ```
 
+
+```
+sudo docker compose down  --remove-orphans
+```
+**4. Home Assistant**
+
+To integrate MQTT with Home Assistant:
+
+1. **Open Home Assistant:** Go to your dashboard.
+2. **Navigate to Integrations:**
+  - Select **Settings > Devices & Services.**
+  - Click **Add Integration** and search for **MQTT.**
+  - Enter your MQTT broker details (IP (```<your-ip-address>```), port (```1883```), and [credentials](https://github.com/vvatelot/mosquitto-docker-compose/blob/main/README.md) if required).
+
+After integration, Home Assistant will connect to your MQTT broker, allowing you to manage devices and sensors.
 
