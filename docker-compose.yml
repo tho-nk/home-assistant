@@ -3,9 +3,52 @@ services:
     container_name: homeassistant
     image: "ghcr.io/home-assistant/home-assistant:stable"
     volumes:
-      - ./config:/config
+      # Mount Home Assistant configuration
+      - ./home-assistant/config:/config
+      # Synchronize time with host
       - /etc/localtime:/etc/localtime:ro
+      # Mount DBus socket for Home Assistant
       - /run/dbus:/run/dbus:ro
     restart: unless-stopped
     privileged: true
     network_mode: host
+
+  mosquitto:
+    image: eclipse-mosquitto
+    container_name: mqtt
+    ports:
+      # Expose MQTT port
+      - 1883:1883
+    volumes:
+      # Mount Mosquitto configuration
+      - ./mosquitto/config:/mosquitto/config
+      # Mount Mosquitto data
+      - ./mosquitto/data:/mosquitto/data
+      # Use system log for Mosquitto logs
+      - mosquitto_log:/mosquitto/log
+
+  zigbee2mqtt:
+    image: koenkk/zigbee2mqtt
+    container_name: zigbee2mqtt
+    depends_on:
+      # Ensure Mosquitto starts before Zigbee2MQTT
+      - mosquitto
+    volumes:
+      # Mount Zigbee2MQTT data
+      - ./zigbee2mqtt:/app/data
+      # Mount udev for device access
+      - /run/udev:/run/udev:ro
+      # Synchronize time with host
+      - /etc/localtime:/etc/localtime:ro
+    ports:
+      # Expose Zigbee2MQTT web frontend
+      - 8080:8080
+    devices:
+      # Map Zigbee USB dongle to container
+      - /dev/serial/by-id/usb-ITead_Sonoff_Zigbee_3.0_USB_Dongle_Plus_5a1d8c8c5ffded118e4bfe64024206e6-if00-port0:/dev/ttyUSB0
+    restart: unless-stopped
+
+volumes:
+  # Persistent log storage for Mosquitto
+  mosquitto_log:
+
