@@ -14,7 +14,7 @@ Use the firmware builder tool available at [Silicon Labs Firmware Builder](https
 
 Check the device path on your system with the following command:
 ```
-ugitho@tc-m720q:~# ls -l /dev/serial/by-id/
+ugitho@tc-m720q:~/installation/hass$ ls -l /dev/serial/by-id/
 total 0
 lrwxrwxrwx 1 root root 13 Sep  8 00:08 usb-ITead_Sonoff_Zigbee_3.0_USB_Dongle_Plus_5a1d8c8c5ffded118e4bfe64024206e6-if00-port0 -> ../../ttyUSB0
 ```
@@ -23,7 +23,7 @@ lrwxrwxrwx 1 root root 13 Sep  8 00:08 usb-ITead_Sonoff_Zigbee_3.0_USB_Dongle_Pl
 
 ***Directory Structure:***
 ```
-ugitho@tc-m720q:~/hass# tree -L 3
+ugitho@tc-m720q:~/installation/hass$ tree -L 3
 .
 ├── docker-compose.yml
 ├── home-assistant
@@ -118,7 +118,7 @@ serial:
 frontend:
   port: 8080
 advanced:
-  log_level: info
+  log_level: warn
 ```
 
 **3. Launch Containers**
@@ -151,3 +151,39 @@ To integrate MQTT with Home Assistant:
 
 After integration, Home Assistant will connect to your MQTT broker, allowing you to manage devices and sensors.
 
+**5. Rootless container**
+
+***Verify Device Permissions on Host***
+
+Check the permissions and group ownership of the device, ensure the output shows:
+```
+ugitho@tc-m720q:~/installation/hass$ ll -l /dev/ttyUSB0
+crw-rw---- 1 root dialout 188, 0 Sep  8 00:08 /dev/ttyUSB0
+```
+
+***Verify Group Membership***
+
+Ensure your user is in the dialout group:
+```
+ugitho@tc-m720q:~/installation/hass$ id $USER
+uid=1000(ugitho) gid=1000(ugitho) groups=1000(ugitho),4(adm),20(dialout),24(cdrom),27(sudo),30(dip),46(plugdev),100(users),114(lpadmin),125(libvirt)
+```
+
+If the dialout group is missing, add your user to the group:
+```
+ugitho@tc-m720q:~/installation/hass$ sudo usermod -aG dialout $USER
+```
+
+***Update Docker Compose File***
+
+```
+services:
+  # ...
+  zigbee2mqtt:
+    user: "1000:1000"
+    group_add:
+      - dialout
+  # ...
+```
+
+And restart the containers

@@ -10,7 +10,7 @@ serial:
 frontend:
   port: 8080
 advanced:
-  log_level: info
+  log_level: warn
 devices:
   '0xa4c1381852800272':
     friendly_name: first_motion_sensor
