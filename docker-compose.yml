@@ -13,6 +13,16 @@ services:
     privileged: true
     network_mode: host
 
+  hass-configurator:
+    container_name: hass-configurator
+    image: "causticlab/hass-configurator-docker:latest"
+    ports:
+      - "3218:3218/tcp"
+    volumes:
+      - "./hass-configurator/config:/config"
+      - "./home-assistant/config:/hass-config"
+    restart: unless-stopped
+
   mosquitto:
     image: eclipse-mosquitto
     container_name: mqtt
