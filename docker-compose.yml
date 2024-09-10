@@ -10,8 +10,9 @@ services:
       # Mount DBus socket for Home Assistant
       - /run/dbus:/run/dbus:ro
     restart: unless-stopped
-    privileged: true
+    # privileged: true
     network_mode: host
+    user: "1000:1000"  # Adjust user ID and group ID as needed
 
   hass-configurator:
     container_name: hass-configurator
