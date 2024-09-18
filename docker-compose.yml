@@ -36,7 +36,7 @@ services:
       - ./mosquitto/data:/mosquitto/data
       # Use system log for Mosquitto logs
       - mosquitto_log:/mosquitto/log
-    restart: unless-stopped
+    restart: always
 
   zigbee2mqtt:
     image: koenkk/zigbee2mqtt

@@ -10,9 +10,9 @@ serial:
 frontend:
   port: 8080
 advanced:
-  log_level: warn
+  log_level: warning
 devices:
   '0xa4c1381852800272':
-    friendly_name: first_motion_sensor
+    friendly_name: livingroom_motion
   '0x0c4314fffe329859':
     friendly_name: Ikea_Tradfri_LED_Driver_Kitchen
