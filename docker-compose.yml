@@ -4,7 +4,8 @@ services:
     image: "ghcr.io/home-assistant/home-assistant:stable"
     volumes:
       # Mount Home Assistant configuration
-      - ./home-assistant/config:/config
+      # - ./home-assistant/config:/config
+      - ${HA_HOME}/${HA_CONFIG}:/config
       # Synchronize time with host
       - /etc/localtime:/etc/localtime:ro
       # Mount DBus socket for Home Assistant
@@ -19,8 +20,10 @@ services:
     ports:
       - "3218:3218/tcp"
     volumes:
-      - "./hass-configurator/config:/config"
-      - "./home-assistant/config:/hass-config"
+      # - "./hass-configurator/config:/config"
+      - ${HA_HOME}/${HA_CONFIGURATOR_CONFIG}:/config
+      # - "./home-assistant/config:/hass-config"
+      - ${HA_HOME}/${HA_CONFIG}:/hass-config
     restart: unless-stopped
 
   mosquitto:
@@ -31,11 +34,14 @@ services:
       - 1883:1883
     volumes:
       # Mount Mosquitto configuration
-      - ./mosquitto/config:/mosquitto/config
+      # - ./mosquitto/config:/mosquitto/config
+      - ${HA_HOME}/${MQTT_CONFIG}:/mosquitto/config
       # Mount Mosquitto data
-      - ./mosquitto/data:/mosquitto/data
+      # - ./mosquitto/data:/mosquitto/data
+      - ${HA_HOME}/${MQTT_DATA}:/mosquitto/data
       # Use system log for Mosquitto logs
-      - mosquitto_log:/mosquitto/log
+      # - mosquitto_log:/mosquitto/log
+      - ${HA_HOME}/${MQTT_LOG}:/mosquitto/log
     restart: always
 
   zigbee2mqtt:
@@ -46,7 +52,8 @@ services:
       - mosquitto
     volumes:
       # Mount Zigbee2MQTT data
-      - ./zigbee2mqtt:/app/data
+      # - ./zigbee2mqtt:/app/data
+      - ${HA_HOME}/${ZB2MQTT}:/app/data
       # Mount udev for device access
       - /run/udev:/run/udev:ro
       # Synchronize time with host
@@ -59,7 +66,8 @@ services:
       - dialout
     devices:
       # Map Zigbee USB dongle to container
-      - /dev/serial/by-id/usb-ITead_Sonoff_Zigbee_3.0_USB_Dongle_Plus_5a1d8c8c5ffded118e4bfe64024206e6-if00-port0:/dev/ttyUSB0
+      # - /dev/serial/by-id/usb-ITead_Sonoff_Zigbee_3.0_USB_Dongle_Plus_5a1d8c8c5ffded118e4bfe64024206e6-if00-port0:/dev/ttyUSB0
+      - ${DONGLE_PLUS_USB}:/dev/ttyUSB0
     restart: unless-stopped
 
 volumes:
